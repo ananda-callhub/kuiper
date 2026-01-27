@@ -1,0 +1,35 @@
+# Kuiper default configuration
+# User overrides go in ~/.kuiper/config.toml
+
+# Maximum budget per request in dollars
+default_budget = 0.25
+
+# Enable fast-path routing for simple prompts
+fast_path = true
+
+# Stream output tokens as they arrive
+streaming = true
+
+# Fast-path heuristics
+[fast_path_settings]
+max_word_count = 25
+escalation_threshold = 0.15
+
+# Model availability
+[models]
+gemini = true
+claude = true
+codex = true
+
+# Model-specific settings
+[models.gemini]
+model = "gemini-2.5-flash"
+max_tokens = 8192
+
+[models.claude]
+model = "claude-sonnet-4-5-20251101"
+max_tokens = 8192
+
+[models.codex]
+model = "gpt-5.2"
+max_tokens = 32768

@@ -1,0 +1,146 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            artifact: kuiper-linux-amd64
+          - target: x86_64-apple-darwin
+            os: macos-latest
+            artifact: kuiper-darwin-amd64
+          - target: aarch64-apple-darwin
+            os: macos-latest
+            artifact: kuiper-darwin-arm64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-action@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Build release binary
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Rename binary
+        run: |
+          cp target/${{ matrix.target }}/release/kuiper ${{ matrix.artifact }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.artifact }}
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create checksums
+        run: |
+          cd artifacts
+          for dir in */; do
+            cd "$dir"
+            sha256sum * > ../$(basename "$dir").sha256
+            cd ..
+          done
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: false
+          prerelease: ${{ contains(github.ref, 'alpha') || contains(github.ref, 'beta') }}
+          files: |
+            artifacts/**/*
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  homebrew:
+    name: Update Homebrew Formula
+    needs: release
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.ref, 'alpha') && !contains(github.ref, 'beta') }}
+
+    steps:
+      - name: Checkout homebrew tap
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/homebrew-kuiper
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          path: homebrew-tap
+
+      - name: Update formula
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+
+          # Download binaries and compute SHA256
+          curl -sL "https://github.com/${{ github.repository }}/releases/download/v${VERSION}/kuiper-darwin-amd64" -o kuiper-darwin-amd64
+          curl -sL "https://github.com/${{ github.repository }}/releases/download/v${VERSION}/kuiper-darwin-arm64" -o kuiper-darwin-arm64
+
+          SHA_AMD64=$(sha256sum kuiper-darwin-amd64 | cut -d' ' -f1)
+          SHA_ARM64=$(sha256sum kuiper-darwin-arm64 | cut -d' ' -f1)
+
+          cat > homebrew-tap/Formula/kuiper.rb << EOF
+          class Kuiper < Formula
+            desc "Multi-model AI orchestrator CLI"
+            homepage "https://github.com/${{ github.repository }}"
+            version "${VERSION}"
+            license "Apache-2.0"
+
+            on_macos do
+              if Hardware::CPU.intel?
+                url "https://github.com/${{ github.repository }}/releases/download/v${VERSION}/kuiper-darwin-amd64"
+                sha256 "${SHA_AMD64}"
+              else
+                url "https://github.com/${{ github.repository }}/releases/download/v${VERSION}/kuiper-darwin-arm64"
+                sha256 "${SHA_ARM64}"
+              end
+            end
+
+            def install
+              bin.install "kuiper-darwin-amd64" => "kuiper" if Hardware::CPU.intel?
+              bin.install "kuiper-darwin-arm64" => "kuiper" if Hardware::CPU.arm?
+            end
+
+            test do
+              system "#{bin}/kuiper", "--version"
+            end
+          end
+          EOF
+
+      - name: Commit and push
+        run: |
+          cd homebrew-tap
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add Formula/kuiper.rb
+          git commit -m "Update kuiper to ${GITHUB_REF#refs/tags/}"
+          git push
