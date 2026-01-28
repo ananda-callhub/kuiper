@@ -22,13 +22,13 @@ claude = true
 codex = true
 
 [models.gemini_settings]
-model = "gemini-2.5-flash"
+model = "gemini-1.5-flash"
 max_tokens = 8192
 
 [models.claude_settings]
-model = "claude-sonnet-4-5-20251101"
+model = "claude-3-5-sonnet-20241022"
 max_tokens = 8192
 
 [models.codex_settings]
-model = "gpt-5.2"
-max_tokens = 32768
+model = "gpt-4o"
+max_tokens = 16384

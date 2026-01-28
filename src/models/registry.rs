@@ -41,58 +41,45 @@ impl ModelRegistry {
     }
 
     fn register_defaults(&mut self) {
-        // Gemini models (2026)
-        // Note: Gemini 1.5 and 2.0 are retired. Using 2.5 and 3.x series.
+        // Gemini models (using actual API model IDs)
         self.register(ModelInfo {
-            id: "gemini-2.5-flash-lite".into(),
-            name: "Gemini 2.5 Flash-Lite".into(),
+            id: "gemini-1.5-flash".into(),
+            name: "Gemini 1.5 Flash".into(),
             provider: "gemini".into(),
             tier: ModelTier::Fast,
             max_tokens: 8192,
             context_window: 1_000_000,
-            cost_per_1k_input: 0.0,
-            cost_per_1k_output: 0.0,
-            description: "High-throughput, cost-optimized for scale".into(),
+            cost_per_1k_input: 0.000075,
+            cost_per_1k_output: 0.0003,
+            description: "Fast and efficient for simple tasks".into(),
         });
         self.register(ModelInfo {
-            id: "gemini-2.5-flash".into(),
-            name: "Gemini 2.5 Flash".into(),
+            id: "gemini-1.5-pro".into(),
+            name: "Gemini 1.5 Pro".into(),
             provider: "gemini".into(),
             tier: ModelTier::Balanced,
             max_tokens: 8192,
-            context_window: 1_000_000,
-            cost_per_1k_input: 0.00015,
-            cost_per_1k_output: 0.0006,
-            description: "Fast with controllable thinking budgets".into(),
-        });
-        self.register(ModelInfo {
-            id: "gemini-2.5-pro".into(),
-            name: "Gemini 2.5 Pro".into(),
-            provider: "gemini".into(),
-            tier: ModelTier::Complex,
-            max_tokens: 8192,
-            context_window: 1_000_000,
+            context_window: 2_000_000,
             cost_per_1k_input: 0.00125,
             cost_per_1k_output: 0.005,
-            description: "Adaptive thinking for complex reasoning".into(),
+            description: "Balanced performance with large context".into(),
         });
         self.register(ModelInfo {
-            id: "gemini-3-pro-preview".into(),
-            name: "Gemini 3 Pro (Preview)".into(),
+            id: "gemini-2.0-flash-exp".into(),
+            name: "Gemini 2.0 Flash (Exp)".into(),
             provider: "gemini".into(),
             tier: ModelTier::Complex,
             max_tokens: 8192,
             context_window: 1_000_000,
-            cost_per_1k_input: 0.002,
-            cost_per_1k_output: 0.008,
-            description: "State-of-the-art reasoning and agentic".into(),
+            cost_per_1k_input: 0.0,
+            cost_per_1k_output: 0.0,
+            description: "Latest experimental model".into(),
         });
 
-        // Claude models (2026)
-        // Claude 4.5 family is current, 3.x models are deprecated
+        // Claude models (using actual API model IDs)
         self.register(ModelInfo {
-            id: "claude-haiku-4-5-20251101".into(),
-            name: "Claude Haiku 4.5".into(),
+            id: "claude-3-5-haiku-20241022".into(),
+            name: "Claude 3.5 Haiku".into(),
             provider: "claude".into(),
             tier: ModelTier::Fast,
             max_tokens: 8192,
@@ -102,141 +89,83 @@ impl ModelRegistry {
             description: "Fastest Claude, great for rapid tasks".into(),
         });
         self.register(ModelInfo {
-            id: "claude-sonnet-4-5-20251101".into(),
-            name: "Claude Sonnet 4.5".into(),
+            id: "claude-3-5-sonnet-20241022".into(),
+            name: "Claude 3.5 Sonnet".into(),
             provider: "claude".into(),
             tier: ModelTier::Balanced,
             max_tokens: 8192,
-            context_window: 1_000_000,
+            context_window: 200_000,
             cost_per_1k_input: 0.003,
             cost_per_1k_output: 0.015,
             description: "Best balance of speed and capability".into(),
         });
         self.register(ModelInfo {
-            id: "claude-opus-4-5-20251101".into(),
-            name: "Claude Opus 4.5".into(),
+            id: "claude-3-opus-20240229".into(),
+            name: "Claude 3 Opus".into(),
             provider: "claude".into(),
             tier: ModelTier::Complex,
-            max_tokens: 8192,
+            max_tokens: 4096,
             context_window: 200_000,
-            cost_per_1k_input: 0.005,
-            cost_per_1k_output: 0.025,
-            description: "Best for coding, agents, computer use".into(),
+            cost_per_1k_input: 0.015,
+            cost_per_1k_output: 0.075,
+            description: "Most capable for complex reasoning".into(),
         });
 
-        // OpenAI models (2026)
-        // GPT-4o is legacy, using GPT-4.1 and o-series
+        // OpenAI models (using actual API model IDs)
         self.register(ModelInfo {
-            id: "gpt-4.1-nano".into(),
-            name: "GPT-4.1 Nano".into(),
+            id: "gpt-4o-mini".into(),
+            name: "GPT-4o Mini".into(),
             provider: "codex".into(),
             tier: ModelTier::Fast,
             max_tokens: 16384,
             context_window: 128_000,
-            cost_per_1k_input: 0.0001,
-            cost_per_1k_output: 0.0004,
-            description: "Fastest, most cost-efficient GPT".into(),
+            cost_per_1k_input: 0.00015,
+            cost_per_1k_output: 0.0006,
+            description: "Fast, affordable for simple tasks".into(),
         });
         self.register(ModelInfo {
-            id: "gpt-4.1-mini".into(),
-            name: "GPT-4.1 Mini".into(),
+            id: "gpt-4o".into(),
+            name: "GPT-4o".into(),
             provider: "codex".into(),
             tier: ModelTier::Balanced,
             max_tokens: 16384,
             context_window: 128_000,
-            cost_per_1k_input: 0.0004,
-            cost_per_1k_output: 0.0016,
-            description: "Smaller, faster version of GPT-4.1".into(),
+            cost_per_1k_input: 0.0025,
+            cost_per_1k_output: 0.01,
+            description: "Best overall multimodal model".into(),
         });
         self.register(ModelInfo {
-            id: "gpt-4.1".into(),
-            name: "GPT-4.1".into(),
+            id: "gpt-4-turbo".into(),
+            name: "GPT-4 Turbo".into(),
             provider: "codex".into(),
             tier: ModelTier::Balanced,
-            max_tokens: 16384,
+            max_tokens: 4096,
             context_window: 128_000,
-            cost_per_1k_input: 0.002,
-            cost_per_1k_output: 0.008,
-            description: "Smartest non-reasoning model".into(),
+            cost_per_1k_input: 0.01,
+            cost_per_1k_output: 0.03,
+            description: "Powerful with large context window".into(),
         });
         self.register(ModelInfo {
-            id: "o4-mini".into(),
-            name: "O4 Mini".into(),
+            id: "o1-preview".into(),
+            name: "O1 Preview".into(),
+            provider: "codex".into(),
+            tier: ModelTier::Complex,
+            max_tokens: 32768,
+            context_window: 128_000,
+            cost_per_1k_input: 0.015,
+            cost_per_1k_output: 0.06,
+            description: "Advanced reasoning model".into(),
+        });
+        self.register(ModelInfo {
+            id: "o1-mini".into(),
+            name: "O1 Mini".into(),
             provider: "codex".into(),
             tier: ModelTier::Balanced,
             max_tokens: 65536,
             context_window: 128_000,
             cost_per_1k_input: 0.003,
             cost_per_1k_output: 0.012,
-            description: "Reasoning at a fraction of the cost".into(),
-        });
-        self.register(ModelInfo {
-            id: "o3".into(),
-            name: "O3".into(),
-            provider: "codex".into(),
-            tier: ModelTier::Balanced,
-            max_tokens: 100_000,
-            context_window: 200_000,
-            cost_per_1k_input: 0.01,
-            cost_per_1k_output: 0.04,
-            description: "Powerful reasoning model".into(),
-        });
-        self.register(ModelInfo {
-            id: "o3-pro".into(),
-            name: "O3 Pro".into(),
-            provider: "codex".into(),
-            tier: ModelTier::Balanced,
-            max_tokens: 100_000,
-            context_window: 200_000,
-            cost_per_1k_input: 0.02,
-            cost_per_1k_output: 0.08,
-            description: "Enhanced reasoning, reliable responses".into(),
-        });
-
-        // GPT-5 series (flagship models)
-        self.register(ModelInfo {
-            id: "gpt-5".into(),
-            name: "GPT-5".into(),
-            provider: "codex".into(),
-            tier: ModelTier::Complex,
-            max_tokens: 32768,
-            context_window: 400_000,
-            cost_per_1k_input: 0.00125,
-            cost_per_1k_output: 0.01,
-            description: "Flagship model with configurable reasoning".into(),
-        });
-        self.register(ModelInfo {
-            id: "gpt-5-codex".into(),
-            name: "GPT-5 Codex".into(),
-            provider: "codex".into(),
-            tier: ModelTier::Complex,
-            max_tokens: 32768,
-            context_window: 400_000,
-            cost_per_1k_input: 0.00125,
-            cost_per_1k_output: 0.01,
-            description: "Optimized for coding and agentic tasks".into(),
-        });
-        self.register(ModelInfo {
-            id: "gpt-5.1".into(),
-            name: "GPT-5.1".into(),
-            provider: "codex".into(),
-            tier: ModelTier::Complex,
-            max_tokens: 32768,
-            context_window: 400_000,
-            cost_per_1k_input: 0.0015,
-            cost_per_1k_output: 0.012,
-            description: "Advanced reasoning for coding/agents".into(),
-        });
-        self.register(ModelInfo {
-            id: "gpt-5.2".into(),
-            name: "GPT-5.2".into(),
-            provider: "codex".into(),
-            tier: ModelTier::Complex,
-            max_tokens: 32768,
-            context_window: 400_000,
-            cost_per_1k_input: 0.00175,
-            cost_per_1k_output: 0.014,
-            description: "Latest flagship for coding and agents".into(),
+            description: "Efficient reasoning model".into(),
         });
     }
 

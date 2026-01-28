@@ -85,16 +85,16 @@ claude = true
 codex = true
 
 [models.gemini_settings]
-model = "gemini-2.5-flash"
+model = "gemini-1.5-flash"
 max_tokens = 8192
 
 [models.claude_settings]
-model = "claude-sonnet-4-5-20251101"
+model = "claude-3-5-sonnet-20241022"
 max_tokens = 8192
 
 [models.codex_settings]
-model = "gpt-5.2"
-max_tokens = 32768
+model = "gpt-4o"
+max_tokens = 16384
 ```
 
 ## Environment Variables
@@ -135,9 +135,9 @@ Kuiper organizes models into three tiers for intelligent routing:
 
 | Tier | Purpose | Models |
 |------|---------|--------|
-| **Fast** ⚡ | Quick, simple tasks | `gemini-2.5-flash-lite`, `claude-haiku-4-5-20251101`, `gpt-4.1-nano` |
-| **Balanced** ⚖️ | General use | `gemini-2.5-flash`, `claude-sonnet-4-5-20251101`, `gpt-4.1`, `o3`, `o4-mini` |
-| **Complex** 🧠 | Research & reasoning | `gemini-2.5-pro`, `gemini-3-pro-preview`, `claude-opus-4-5-20251101`, `gpt-5`, `gpt-5.2`, `gpt-5-codex` |
+| **Fast** ⚡ | Quick, simple tasks | `gemini-1.5-flash`, `claude-3-5-haiku-20241022`, `gpt-4o-mini` |
+| **Balanced** ⚖️ | General use | `gemini-1.5-pro`, `claude-3-5-sonnet-20241022`, `gpt-4o`, `gpt-4-turbo`, `o1-mini` |
+| **Complex** 🧠 | Research & reasoning | `gemini-2.0-flash-exp`, `claude-3-opus-20240229`, `o1-preview` |
 
 **Automatic tier selection:**
 - `--fast` → Uses fast-tier models
@@ -146,10 +146,10 @@ Kuiper organizes models into three tiers for intelligent routing:
 
 **Manual model selection:**
 ```bash
-kuiper do --model gpt-4.1 "your prompt"
-kuiper do --model gpt-5.2 "complex coding task"
-kuiper do --model claude-opus-4-5-20251101 "complex analysis"
-kuiper do --model o3 "deep reasoning task"
+kuiper do --model gpt-4o "your prompt"
+kuiper do --model o1-preview "complex coding task"
+kuiper do --model claude-3-opus-20240229 "complex analysis"
+kuiper do --model gemini-1.5-pro "large context task"
 ```
 
 ### Routing Logic

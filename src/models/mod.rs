@@ -95,12 +95,12 @@ pub async fn run_complex(model: ModelType, prompt: &str, config: &Config) -> Res
 /// Get default model ID for a provider and path type
 fn default_model_id(model: &ModelType, is_fast: bool) -> &'static str {
     match (model, is_fast) {
-        (ModelType::Gemini, true) => "gemini-2.5-flash-lite",
-        (ModelType::Gemini, false) => "gemini-2.5-pro",
-        (ModelType::Claude, true) => "claude-haiku-4-5-20251101",
-        (ModelType::Claude, false) => "claude-sonnet-4-5-20251101",
-        (ModelType::Codex, true) => "gpt-4.1-nano",
-        (ModelType::Codex, false) => "gpt-5.2",
+        (ModelType::Gemini, true) => "gemini-1.5-flash",
+        (ModelType::Gemini, false) => "gemini-1.5-pro",
+        (ModelType::Claude, true) => "claude-3-5-haiku-20241022",
+        (ModelType::Claude, false) => "claude-3-5-sonnet-20241022",
+        (ModelType::Codex, true) => "gpt-4o-mini",
+        (ModelType::Codex, false) => "gpt-4o",
     }
 }
 
