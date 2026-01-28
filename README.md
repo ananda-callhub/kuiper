@@ -19,7 +19,7 @@ Kuiper is a fast, multi-model AI CLI for orchestrating LLM tasks. It routes task
 curl -fsSL https://get.kuiper.dev | sh
 
 # Homebrew (macOS)
-brew tap yourusername/kuiper
+brew tap ananda-callhub/kuiper
 brew install kuiper
 
 # From source

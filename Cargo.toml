@@ -2,10 +2,10 @@
 name = "kuiper"
 version = "0.1.0"
 edition = "2021"
-authors = ["Your Name <you@example.com>"]
+authors = ["Ananda <ananda@callhub.io>"]
 description = "Kuiper CLI: multi-model agentic orchestrator for AI tasks"
 license = "MIT"
-repository = "https://github.com/yourusername/kuiper"
+repository = "https://github.com/ananda-callhub/kuiper"
 
 [dependencies]
 clap = { version = "4.4", features = ["derive"] }

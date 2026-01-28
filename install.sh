@@ -2,10 +2,10 @@
 set -e
 
 # Kuiper CLI Installer
-# MIT License - https://github.com/yourusername/kuiper
+# MIT License - https://github.com/ananda-callhub/kuiper
 
 # Configuration (can be overridden by environment variables)
-REPO="${KUIPER_REPO:-yourusername/kuiper}"
+REPO="${KUIPER_REPO:-ananda-callhub/kuiper}"
 VERSION="${KUIPER_VERSION:-latest}"
 INSTALL_DIR="${KUIPER_INSTALL_DIR:-/usr/local/bin}"
 
