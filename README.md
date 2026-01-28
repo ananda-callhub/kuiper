@@ -179,23 +179,46 @@ kuiper do --model o3 "deep reasoning task"
 
 ### Automatic Fallback
 
-When a model fails due to rate limits, quota exhaustion, or API errors, Kuiper automatically falls back to the next available model:
+Kuiper has two levels of automatic fallback when models fail:
+
+#### 1. Tiered Fallback (within same provider)
+When a complex model's quota is exhausted, Kuiper tries lighter models from the same provider first:
 
 ```
-Primary Model Failed (rate limit)
+Complex Model Quota Exceeded
+        │
+        ▼
+┌─────────────────────────────────┐
+│ Same Provider Fallback          │
+│ gpt-5.2 → gpt-4.1 → gpt-4.1-nano│
+│   or                            │
+│ claude-opus → sonnet → haiku    │
+│   or                            │
+│ gemini-2.5-pro → flash → lite   │
+└─────────────────────────────────┘
+        │
+        ▼
+    Lighter Model (same provider)
+```
+
+#### 2. Provider Fallback (cross-provider)
+If all models from one provider fail, Kuiper switches to another provider:
+
+```
+All Provider Models Failed
         │
         ▼
 ┌───────────────────┐
-│ Fallback Chain    │
-│ Gemini → Claude → Codex
+│ Provider Chain    │
+│ OpenAI → Claude → Gemini
 │   or              │
-│ Claude → Gemini → Codex
+│ Claude → Gemini → OpenAI
 │   or              │
-│ Codex → Claude → Gemini
+│ Gemini → Claude → OpenAI
 └───────────────────┘
         │
         ▼
-    Next Available Model
+    Different Provider
 ```
 
 **Fallback triggers:**
@@ -205,14 +228,17 @@ Primary Model Failed (rate limit)
 - Timeout / connection errors
 - Authentication errors
 
-**Example:**
+**Example (tiered fallback):**
 ```bash
-# If GEMINI_API_KEY quota is exceeded, automatically uses ANTHROPIC_API_KEY
-kuiper do "hello world"
-[Fast Path] Primary model: Gemini
-[Fallback] Gemini failed (rate limit exceeded), trying next model...
-[Fallback] Trying Claude...
-[Fast Path] Fell back from Gemini to claude
+# Research mode: if gpt-5.2 quota exceeded, falls back to gpt-4.1, then gpt-4.1-nano
+kuiper do --research "analyze this complex problem"
+[Research Mode] Primary model: gpt-5.2 (Complex tier)
+[Research Mode] Fallback chain: gpt-5.2(Complex) → gpt-5.1(Complex) → gpt-4.1(Balanced) → gpt-4.1-nano(Fast)
+[Fallback] gpt-5.2 failed (quota exceeded), trying next...
+[Fallback] Trying gpt-5.1 (complex tier)...
+[Fallback] gpt-5.1 failed (quota exceeded), trying next...
+[Fallback] Trying gpt-4.1 (balanced tier)...
+[Research Mode] Fell back from gpt-5.2, gpt-5.1 to gpt-4.1 (lighter model)
 ```
 
 ### Escalation Strategy
@@ -341,4 +367,4 @@ Kuiper stores data in `~/.kuiper/`:
 
 ## License
 
-Apache-2.0
+MIT

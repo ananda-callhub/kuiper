@@ -1,7 +1,7 @@
 use anyhow::Result;
 use std::time::Instant;
 use crate::config::Config;
-use crate::fallback::{self, FallbackChain};
+use crate::fallback::{self, FallbackChain, TieredFallbackChain};
 use crate::models::{self, ModelType};
 use crate::routing::heuristics;
 use crate::streaming;
@@ -96,6 +96,88 @@ pub async fn run_fast_path_streaming(prompt: &str, config: &Config) -> Result<St
     telemetry::log_usage(prompt, true, model_name, duration);
 
     Ok(format!("Streamed response for: {}", prompt))
+}
+
+/// Execute a fast-path request with tiered fallback (Complex → Balanced → Fast)
+/// Use this when you want to start with fast models but allow fallback to any tier
+pub async fn run_fast_path_tiered(prompt: &str, config: &Config) -> Result<String> {
+    let chain = fallback::select_tiered_chain_for_prompt(prompt, false);
+
+    if chain.instances.is_empty() {
+        anyhow::bail!("No models available. Please configure API keys.");
+    }
+
+    let primary = &chain.instances[0];
+    println!("[Fast Path] Primary model: {} ({:?} tier)", primary.model_id, primary.tier);
+    println!(
+        "[Fast Path] Fallback chain: {}",
+        chain.instances.iter().map(|i| i.model_id.as_str()).collect::<Vec<_>>().join(" → ")
+    );
+
+    let _ = telemetry::save_prompt(prompt);
+    let start = Instant::now();
+
+    let (response, _provider, model_id, attempts) =
+        fallback::execute_with_tiered_fallback(prompt, &chain, config).await?;
+
+    let duration = start.elapsed().as_millis() as u64;
+
+    if attempts.len() > 1 {
+        let failed: Vec<String> = attempts
+            .iter()
+            .filter(|a| !a.success)
+            .map(|a| a.model_id.clone())
+            .collect();
+        println!("[Fast Path] Fell back from {} to {}", failed.join(", "), model_id);
+    }
+
+    telemetry::log_usage(prompt, true, &model_id, duration);
+    Ok(response)
+}
+
+/// Execute a research/complex task with tiered fallback
+/// Starts with complex-tier models and falls back to balanced then fast if quota exhausted
+pub async fn run_research_path(prompt: &str, config: &Config) -> Result<String> {
+    let chain = fallback::select_tiered_chain_for_prompt(prompt, true);
+
+    if chain.instances.is_empty() {
+        anyhow::bail!("No models available. Please configure API keys.");
+    }
+
+    let primary = &chain.instances[0];
+    println!("[Research Mode] Primary model: {} ({:?} tier)", primary.model_id, primary.tier);
+    println!(
+        "[Research Mode] Fallback chain: {}",
+        chain.instances.iter().map(|i| format!("{}({:?})", i.model_id, i.tier)).collect::<Vec<_>>().join(" → ")
+    );
+
+    let _ = telemetry::save_prompt(prompt);
+    let start = Instant::now();
+
+    let (response, _provider, model_id, attempts) =
+        fallback::execute_with_tiered_fallback(prompt, &chain, config).await?;
+
+    let duration = start.elapsed().as_millis() as u64;
+
+    if attempts.len() > 1 {
+        let failed: Vec<String> = attempts
+            .iter()
+            .filter(|a| !a.success)
+            .map(|a| format!("{}({:?})", a.model_id, a.model))
+            .collect();
+        println!(
+            "[Research Mode] Fell back from {} to {} (lighter model)",
+            failed.join(", "),
+            model_id
+        );
+        telemetry::log_event(
+            "research_fallback_to_lighter",
+            &format!("from={}, to={}", failed.join(","), model_id),
+        );
+    }
+
+    telemetry::log_usage(prompt, false, &model_id, duration);
+    Ok(response)
 }
 
 /// Select the appropriate model for fast-path execution (without fallback)

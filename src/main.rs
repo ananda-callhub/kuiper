@@ -91,14 +91,19 @@ async fn main() -> Result<()> {
                     }
                 } else {
                     if research {
+                        // Research mode: use complex models with tiered fallback
+                        // Falls back to lighter models if complex model quota exhausted
                         telemetry::log_event("research_mode_start", &prompt);
-                        println!("[Mode] Research (using complex-tier models)");
+                        println!("[Mode] Research (using complex-tier models with tiered fallback)");
+                        let result = routing::fast_path::run_research_path(&prompt, &config).await?;
+                        streaming::print_streamed(&result);
                     } else {
+                        // Full orchestration: multi-step planning
                         telemetry::log_event("full_path_start", &prompt);
                         println!("[Mode] Full orchestration");
+                        let plan = controller::create_plan(&prompt, &config).await?;
+                        controller::execute_plan(plan, &config).await?;
                     }
-                    let plan = controller::create_plan(&prompt, &config).await?;
-                    controller::execute_plan(plan, &config).await?;
                 }
             }
 
