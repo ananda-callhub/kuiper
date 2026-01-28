@@ -87,7 +87,7 @@ impl Default for ModelsConfig {
                 max_tokens: 8192,
             },
             claude_settings: ModelSettings {
-                model: "claude-3-5-sonnet-20241022".to_string(),
+                model: "claude-sonnet-4-5-20250929".to_string(),
                 max_tokens: 8192,
             },
             codex_settings: ModelSettings {

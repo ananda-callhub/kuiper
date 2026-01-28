@@ -76,7 +76,7 @@ impl ModelRegistry {
             description: "Latest experimental model".into(),
         });
 
-        // Claude models (using actual API model IDs)
+        // Claude models (latest 4.5 series)
         self.register(ModelInfo {
             id: "claude-3-5-haiku-20241022".into(),
             name: "Claude 3.5 Haiku".into(),
@@ -86,11 +86,11 @@ impl ModelRegistry {
             context_window: 200_000,
             cost_per_1k_input: 0.001,
             cost_per_1k_output: 0.005,
-            description: "Fastest Claude, great for rapid tasks".into(),
+            description: "Fast and efficient for simple tasks".into(),
         });
         self.register(ModelInfo {
-            id: "claude-3-5-sonnet-20241022".into(),
-            name: "Claude 3.5 Sonnet".into(),
+            id: "claude-sonnet-4-5-20250929".into(),
+            name: "Claude Sonnet 4.5".into(),
             provider: "claude".into(),
             tier: ModelTier::Balanced,
             max_tokens: 8192,
@@ -100,11 +100,11 @@ impl ModelRegistry {
             description: "Best balance of speed and capability".into(),
         });
         self.register(ModelInfo {
-            id: "claude-3-opus-20240229".into(),
-            name: "Claude 3 Opus".into(),
+            id: "claude-opus-4-5-20251124".into(),
+            name: "Claude Opus 4.5".into(),
             provider: "claude".into(),
             tier: ModelTier::Complex,
-            max_tokens: 4096,
+            max_tokens: 8192,
             context_window: 200_000,
             cost_per_1k_input: 0.015,
             cost_per_1k_output: 0.075,

@@ -89,7 +89,7 @@ model = "gemini-1.5-flash"
 max_tokens = 8192
 
 [models.claude_settings]
-model = "claude-3-5-sonnet-20241022"
+model = "claude-sonnet-4-5-20250929"
 max_tokens = 8192
 
 [models.codex_settings]
@@ -136,8 +136,8 @@ Kuiper organizes models into three tiers for intelligent routing:
 | Tier | Purpose | Models |
 |------|---------|--------|
 | **Fast** ⚡ | Quick, simple tasks | `gemini-1.5-flash`, `claude-3-5-haiku-20241022`, `gpt-4o-mini` |
-| **Balanced** ⚖️ | General use | `gemini-1.5-pro`, `claude-3-5-sonnet-20241022`, `gpt-4o`, `gpt-4-turbo`, `o1-mini` |
-| **Complex** 🧠 | Research & reasoning | `gemini-2.0-flash-exp`, `claude-3-opus-20240229`, `o1-preview` |
+| **Balanced** ⚖️ | General use | `gemini-1.5-pro`, `claude-sonnet-4-5-20250929`, `gpt-4o`, `gpt-4-turbo`, `o1-mini` |
+| **Complex** 🧠 | Research & reasoning | `gemini-2.0-flash-exp`, `claude-opus-4-5-20251124`, `o1-preview` |
 
 **Automatic tier selection:**
 - `--fast` → Uses fast-tier models
@@ -148,7 +148,7 @@ Kuiper organizes models into three tiers for intelligent routing:
 ```bash
 kuiper do --model gpt-4o "your prompt"
 kuiper do --model o1-preview "complex coding task"
-kuiper do --model claude-3-opus-20240229 "complex analysis"
+kuiper do --model claude-opus-4-5-20251124 "complex analysis"
 kuiper do --model gemini-1.5-pro "large context task"
 ```
 
