@@ -83,16 +83,16 @@ impl Default for ModelsConfig {
             claude: true,
             codex: true,
             gemini_settings: ModelSettings {
-                model: "gemini-2.0-flash".to_string(),
+                model: "gemini-2.5-flash".to_string(),
                 max_tokens: 8192,
             },
             claude_settings: ModelSettings {
-                model: "claude-sonnet-4-20250514".to_string(),
+                model: "claude-sonnet-4-5-20251101".to_string(),
                 max_tokens: 8192,
             },
             codex_settings: ModelSettings {
-                model: "gpt-4o".to_string(),
-                max_tokens: 8192,
+                model: "gpt-5.2".to_string(),
+                max_tokens: 32768,
             },
         }
     }

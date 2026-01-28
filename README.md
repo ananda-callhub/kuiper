@@ -84,15 +84,15 @@ gemini = true
 claude = true
 codex = true
 
-[models.gemini]
+[models.gemini_settings]
 model = "gemini-2.5-flash"
 max_tokens = 8192
 
-[models.claude]
+[models.claude_settings]
 model = "claude-sonnet-4-5-20251101"
 max_tokens = 8192
 
-[models.codex]
+[models.codex_settings]
 model = "gpt-5.2"
 max_tokens = 32768
 ```
