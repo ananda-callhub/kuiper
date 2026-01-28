@@ -1,7 +1,7 @@
 use anyhow::Result;
 use std::time::Instant;
 use crate::config::Config;
-use crate::fallback::{self, FallbackChain, TieredFallbackChain};
+use crate::fallback;
 use crate::models::{self, ModelType};
 use crate::routing::heuristics;
 use crate::streaming;
@@ -79,7 +79,7 @@ pub async fn run_fast_path(prompt: &str, config: &Config) -> Result<String> {
 }
 
 /// Execute fast-path with streaming output (demo mode)
-pub async fn run_fast_path_streaming(prompt: &str, config: &Config) -> Result<String> {
+pub async fn run_fast_path_streaming(prompt: &str, _config: &Config) -> Result<String> {
     let chain = fallback::select_chain_for_prompt(prompt);
     let primary_model = chain.models.first().cloned().unwrap_or(ModelType::Gemini);
     let model_name = models::model_name(&primary_model);

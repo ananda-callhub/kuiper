@@ -17,7 +17,7 @@ pub struct PlanStep {
 }
 
 /// Create an execution plan for a complex task
-pub async fn create_plan(prompt: &str, config: &Config) -> Result<Vec<PlanStep>> {
+pub async fn create_plan(prompt: &str, _config: &Config) -> Result<Vec<PlanStep>> {
     telemetry::log_event("planning_start", prompt);
 
     // Save prompt to history

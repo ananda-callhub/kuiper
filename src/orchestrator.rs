@@ -106,7 +106,7 @@ async fn run_model_with_fallback(primary: ModelType, prompt: &str, config: &Conf
 
     // Try with the full fallback chain
     match fallback::execute_with_fallback(prompt, &chain, config).await {
-        Ok((response, used_model, attempts)) => {
+        Ok((response, used_model, _attempts)) => {
             let was_fallback = used_model != primary;
 
             ModelResult {

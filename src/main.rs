@@ -1,3 +1,6 @@
+// Allow dead code for utility modules - these provide APIs for future features
+#![allow(dead_code)]
+
 mod cache;
 mod cli;
 mod config;

@@ -5,7 +5,7 @@ pub mod registry;
 
 use anyhow::Result;
 use crate::config::Config;
-pub use registry::{ModelInfo, ModelRegistry, ModelTier, format_model_list};
+pub use registry::{ModelRegistry, ModelTier, format_model_list};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum ModelType {

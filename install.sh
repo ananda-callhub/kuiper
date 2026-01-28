@@ -60,9 +60,15 @@ esac
 # Get the latest version if not specified
 if [ "$VERSION" = "latest" ]; then
     info "Fetching latest version..."
-    VERSION=$(curl -fsSL "https://api.github.com/repos/${REPO}/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+    VERSION=$(curl -fsSL "https://api.github.com/repos/${REPO}/releases/latest" 2>/dev/null | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
     if [ -z "$VERSION" ]; then
-        error "Failed to fetch latest version"
+        error "No releases found for ${REPO}"
+        echo ""
+        echo "To install from source instead, run:"
+        echo "  cargo install --git https://github.com/${REPO}"
+        echo ""
+        echo "Or create a release first:"
+        echo "  git tag v0.1.0 && git push --tags"
         exit 1
     fi
 fi
